@@ -330,11 +330,14 @@ footer { background: var(--dark); border-top: 1px solid var(--line); padding: 2.
   .video-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  nav { padding: 0.4rem 1.2rem; }
+  /* solid bar on mobile so logo + hamburger stay visible over the light hero */
+  nav { padding: 0.4rem 1.2rem; background: var(--dark); border-bottom-color: var(--line); }
+  nav::before { display: none; }
   .nav-logo-text { font-size: 1.35rem; }
   .nav-logo-img { height: 44px; }
 
   .nav-toggle { display: block; }
+  .nav-toggle span { background: var(--cream); }
   .nav-links {
     position: fixed; top: 0; right: 0;
     height: 100vh; height: 100dvh;
@@ -640,7 +643,7 @@ footer { background: var(--dark); border-top: 1px solid var(--line); padding: 2.
       <div class="video-label">Baby Bassinet</div>
     </div>
     <div class="video-card reveal d2">
-      <video muted loop playsinline preload="none" src="work-custom.mp4"></video>
+      <video muted loop playsinline preload="none" src="work-story.mp4"></video>
       <div class="video-label">How It Started</div>
     </div>
     <div class="video-card reveal d2">
