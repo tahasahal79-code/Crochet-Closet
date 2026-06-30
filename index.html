@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crochet Closet — Handmade Crochet Boutique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --dark: #17647A;           /* Deep Teal — dark chrome (nav/footer/overlays) */
+  --heading: #B93172;        /* Main headings */
+  --btn: #D84F8F;            /* Buttons */
+  --btn-hover: #B93172;      /* Button hover */
+  --blue: #9ED4EA;           /* Secondary highlights */
+  --cream: #FFE7A8;          /* Small decorative elements */
+  --hero-bg: #F7D6DE;        /* Hero section background */
+  --bg: #FCEEF2;             /* Page background */
+  --bg2: #FFF8FA;            /* Lighter section background */
+  --bg3: #F3D6E0;            /* Deeper section background */
+  --text: #333333;           /* Body text */
+  --muted: #17647A;          /* Secondary / label text */
+  --line: rgba(158,212,234,0.55); /* Divider / border (blue-tinted) */
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; }
+
+/* mobile touch friendliness */
+a, button { -webkit-tap-highlight-color: rgba(216,79,143,0.25); touch-action: manipulation; }
+img, video { max-width: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 4rem;
+  transition: background 0.4s, border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(23,100,122,0.6) 0%, rgba(23,100,122,0) 100%);
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.4s;
+}
+nav.scrolled::before { opacity: 0; }
+nav.scrolled {
+  background: var(--dark);
+  border-bottom-color: var(--line);
+}
+.nav-logo { text-decoration: none; display: flex; align-items: center; }
+.nav-logo-img { height: 64px; width: auto; display: block; }
+.nav-logo-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.9rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.nav-logo-text em { font-style: italic; color: var(--btn); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.78);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--btn); }
+.nav-links a svg { vertical-align: middle; }
+.btn-nav {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff !important;
+  background: var(--btn);
+  padding: 0.6rem 1.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+.btn-nav:hover { background: var(--btn-hover) !important; }
+
+/* MOBILE NAV TOGGLE */
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1060; }
+.nav-toggle span { display: block; width: 26px; height: 2px; background: var(--btn); margin: 6px 0; transition: transform 0.3s ease, opacity 0.3s ease; }
+.nav-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+.nav-backdrop { position: fixed; inset: 0; background: rgba(23,100,122,0.55); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 150; }
+.nav-backdrop.open { opacity: 1; pointer-events: auto; }
+body.menu-open .wa-float { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* HERO SLIDESHOW */
+.hero {
+  position: relative;
+  height: 100vh; height: 100dvh; min-height: 600px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 90px;
+  background: linear-gradient(160deg, var(--hero-bg) 0%, #FCEEF2 100%);
+}
+.slides { position: absolute; inset: 0; z-index: 0; }
+.slide {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(60px) scale(1.04);
+  transition: opacity 1.1s ease, transform 1.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+.slide.is-active { opacity: 1; transform: translateX(0) scale(1); }
+.slide.is-prev {
+  opacity: 0; transform: translateX(-60px) scale(0.97);
+  transition: opacity 0.85s ease, transform 1.1s ease;
+  pointer-events: none;
+}
+.slide-img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  animation: kenBurns 9s ease-in-out infinite alternate;
+}
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12); }
+}
+.slide::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.12) 45%, rgba(0,0,0,0.4) 100%);
+}
+
+.hero-content { position: relative; z-index: 10; text-align: center; padding: 0 2rem; max-width: 960px; }
+.hero-tag {
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--btn); margin-bottom: 1.8rem;
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+  opacity: 0; animation: fadeUp 1s 0.4s forwards;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.55);
+}
+.hero-tag::before, .hero-tag::after { content: ''; display: block; width: 44px; height: 1px; background: var(--cream); opacity: 0.9; }
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 7.5vw, 6.5rem);
+  font-weight: 300; line-height: 1.0; color: #fff;
+  letter-spacing: 0.03em;
+  opacity: 0; animation: fadeUp 1s 0.65s forwards;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.5), 0 4px 48px rgba(0,0,0,0.35);
+}
+.hero-title em { font-style: italic; color: var(--heading); }
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  font-style: italic; font-weight: 300; color: rgba(255,255,255,0.85);
+  margin: 1.3rem 0 2.8rem; letter-spacing: 0.07em;
+  opacity: 0; animation: fadeUp 1s 0.9s forwards;
+}
+.hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 1s 1.1s forwards; }
+.btn-gold {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  background: var(--btn); color: #fff;
+  padding: 1.05rem 2.6rem; text-decoration: none; font-weight: 500;
+  transition: background 0.3s; display: inline-block;
+}
+.btn-gold:hover { background: var(--btn-hover); }
+.btn-ghost {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  background: transparent; color: #fff;
+  border: 1px solid rgba(255,255,255,0.6);
+  padding: 1.05rem 2.6rem; text-decoration: none;
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+}
+.btn-ghost:hover { border-color: var(--btn); color: var(--btn); background: rgba(216,79,143,0.14); }
+.btn-whatsapp {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  background: #25D366; color: #fff;
+  padding: 1.05rem 2.6rem; text-decoration: none; font-weight: 500;
+  transition: background 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-whatsapp:hover { background: #1ebe5b; }
+
+.slide-dots { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+.dot { width: 32px; height: 2px; background: rgba(255,255,255,0.4); position: relative; overflow: hidden; cursor: pointer; }
+.dot-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--cream); width: 0; }
+.dot.is-active .dot-fill { animation: dotFill 7s linear forwards; }
+.dot.is-complete .dot-fill { width: 100%; animation: none; }
+@keyframes dotFill { 0%{width:0} 100%{width:100%} }
+
+.hero-scroll { position: absolute; bottom: 2.2rem; right: 4rem; display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10; }
+.scroll-text { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.65); writing-mode: vertical-rl; }
+.scroll-bar { width: 1px; height: 48px; background: linear-gradient(to bottom, var(--cream), transparent); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* STATS */
+.stats { background: var(--heading); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(4,1fr); }
+.stat-item { padding: 2.8rem 2rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.18); }
+.stat-item:last-child { border-right: none; }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; color: var(--cream); line-height: 1; margin-bottom: 0.3rem; }
+.stat-label { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+
+/* SHARED */
+.sec-label { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--btn); margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.8rem; }
+.sec-label::after { content: ''; display: block; width: 32px; height: 1px; background: var(--cream); opacity: 0.9; }
+.sec-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.15; color: var(--heading); margin-bottom: 0.8rem; }
+
+/* ABOUT SPLIT */
+.about-wrap { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; }
+.about-img { position: relative; overflow: hidden; min-height: 600px; }
+.about-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s ease; }
+.about-img:hover img { transform: scale(1.04); }
+.about-badge { position: absolute; bottom: 2.5rem; left: 2.5rem; background: var(--cream); color: var(--dark); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; padding: 0.6rem 1.3rem; }
+.about-text { background: var(--bg2); padding: 5rem; display: flex; flex-direction: column; justify-content: center; gap: 1.4rem; }
+.about-text .quote { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-style: italic; color: var(--heading); line-height: 1.65; }
+.about-text .body { font-size: 14.5px; color: var(--muted); line-height: 1.9; }
+.gold-rule { width: 40px; height: 1px; background: var(--cream); opacity: 0.9; }
+
+/* COLLECTIONS */
+.services-head { padding: 5rem 4rem 0; }
+.services-grid { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 3.5rem; }
+.svc-card { position: relative; overflow: hidden; cursor: default; }
+.svc-img { width: 100%; height: 480px; object-fit: cover; object-position: center center; display: block; filter: brightness(0.66); transition: filter 0.5s, transform 0.6s; }
+.svc-card:hover .svc-img { filter: brightness(0.42); transform: scale(1.07); }
+.svc-overlay { position: absolute; inset: 0; padding: 2rem 1.8rem; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%); transition: background 0.4s; }
+.svc-card:hover .svc-overlay { background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.3) 55%); }
+.svc-num { font-family:'Cormorant Garamond',serif; font-size:0.85rem; color:var(--cream); letter-spacing:0.2em; margin-bottom:0.5rem; }
+.svc-name { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:400; color:#fff; letter-spacing:0.04em; margin-bottom:0.5rem; }
+.svc-desc { font-size: 12.5px; color: rgba(255,255,255,0.72); line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height 0.45s ease, opacity 0.4s; opacity: 0; }
+.svc-card:hover .svc-desc { max-height: 80px; opacity: 1; }
+.svc-bar { width:0; height:2px; background:var(--cream); margin-top:0.9rem; transition: width 0.4s ease; }
+.svc-card:hover .svc-bar { width: 36px; }
+
+/* TESTIMONIALS */
+.testimonials { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 5rem 4rem; }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--line); margin-top: 3rem; }
+.testi-card { background: var(--bg); padding: 2.5rem; }
+.stars { color: var(--btn); font-size: 13px; letter-spacing: 3px; margin-bottom: 1.2rem; }
+.t-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; line-height: 1.72; color: var(--text); margin-bottom: 1.5rem; }
+.t-author { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.t-author strong { display: block; color: var(--heading); font-weight: 500; margin-bottom: 2px; }
+
+/* OUR WORK */
+.our-work { padding: 5rem 4rem 0; background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; }
+.video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 2rem; }
+.video-card { position: relative; overflow: hidden; cursor: pointer; background: var(--bg3); aspect-ratio: 9/16; }
+.video-card video, .video-card img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(1.0) contrast(1.04) saturate(1.06); image-rendering: -webkit-optimize-contrast; backface-visibility: hidden; transform: translateZ(0); transition: filter 0.5s, transform 0.6s; }
+.video-card:hover video, .video-card:hover img { filter: brightness(1.04) contrast(1.07) saturate(1.12); transform: scale(1.04); }
+.video-label { position: absolute; bottom: 1rem; left: 1rem; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; }
+.video-card:hover .video-label { opacity: 1; }
+
+/* HOURS + CONTACT */
+.info-section { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg2); }
+.info-col { padding: 5.5rem 4rem; }
+.info-col:first-child { border-right: 1px solid var(--line); }
+.hours-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(23,100,122,0.14); font-size: 14px; }
+.h-day { color: var(--muted); }
+.h-time { color: var(--text); font-weight: 400; }
+.h-open { color: var(--btn); }
+.contact-row { display: flex; gap: 1.2rem; padding: 1rem 0; border-bottom: 1px solid rgba(23,100,122,0.14); text-decoration: none; color: inherit; align-items: flex-start; transition: color 0.3s; }
+.contact-row:hover .c-val { color: var(--btn); }
+.c-lbl { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); min-width: 90px; padding-top: 3px; }
+.c-val { font-size: 14px; color: var(--text); line-height: 1.6; transition: color 0.3s; }
+
+/* FOOTER */
+footer { background: var(--dark); border-top: 1px solid var(--line); padding: 2.8rem 4rem; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2rem; }
+.f-logo { display: flex; align-items: center; }
+.footer-logo-img { height: 62px; width: auto; display: block; }
+.footer-logo-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500; font-size: 1.7rem; color: #fff; letter-spacing: 0.02em; }
+.footer-logo-text em { font-style: italic; color: var(--btn); }
+.f-copy { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.65); text-align: center; }
+.f-links { display: flex; gap: 2rem; justify-content: flex-end; align-items: center; }
+.f-links a { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.3s; }
+.f-links a:hover { color: var(--btn); }
+.f-links a svg { vertical-align: middle; }
+
+/* FLOATING WHATSAPP */
+.wa-float { position: fixed; bottom: 2.2rem; right: 2.2rem; z-index: 1000; width: 58px; height: 58px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none; transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s, visibility 0.3s; }
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.55); }
+.wa-float svg { width: 30px; height: 30px; fill: #fff; }
+.wa-tooltip { position: absolute; right: calc(100% + 12px); background: rgba(23,100,122,0.95); color: #fff; font-size: 11px; letter-spacing: 0.15em; white-space: nowrap; padding: 0.5rem 1rem; border: 1px solid var(--line); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.wa-float:hover .wa-tooltip { opacity: 1; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform: translateY(28px); } to { opacity:1; transform: translateY(0); } }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.reveal.on { opacity:1; transform: translateY(0); }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.22s; }
+.d3 { transition-delay: 0.36s; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  nav { padding: 0.5rem 2rem; }
+  .nav-logo-text { font-size: 1.6rem; }
+  .nav-logo-img { height: 54px; }
+  .services-grid { grid-template-columns: repeat(2,1fr); }
+  .testi-grid { grid-template-columns: 1fr; }
+  .about-wrap { grid-template-columns: 1fr; }
+  .about-img { min-height: 420px; }
+  .about-text { padding: 3.5rem; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .video-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  nav { padding: 0.4rem 1.2rem; }
+  .nav-logo-text { font-size: 1.35rem; }
+  .nav-logo-img { height: 44px; }
+
+  .nav-toggle { display: block; }
+  .nav-links {
+    position: fixed; top: 0; right: 0;
+    height: 100vh; height: 100dvh;
+    width: min(82vw, 320px);
+    flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.7rem;
+    background: var(--dark);
+    border-left: 1px solid var(--line);
+    padding: 5.5rem 2.2rem 2.2rem;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    transform: translateX(105%);
+    transition: transform 0.4s ease;
+    z-index: 1050;
+  }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a { font-size: 13px; }
+  .nav-links .btn-nav { padding: 0.85rem 1.9rem; margin-top: 0.4rem; }
+
+  /* HERO — stacked layout: full uncropped photo above, text below */
+  .hero {
+    height: auto; min-height: 0;
+    flex-direction: column; justify-content: flex-start;
+    padding: 64px 0 2.8rem;
+  }
+  .slides {
+    order: 1;
+    position: relative; inset: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;     /* matches the photos → shown in full, no crop */
+    overflow: hidden;
+  }
+  .slide-img {
+    background-position: center !important;
+    animation: none;          /* no Ken Burns zoom on mobile → zero cropping */
+    transform: none;
+  }
+  .slide::after { background: linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.1) 100%); }
+  .slide-dots {
+    order: 2;
+    position: static; transform: none; left: auto; bottom: auto;
+    justify-content: center; margin: 1.1rem auto 1.5rem;
+  }
+  .dot { background: rgba(185,49,114,0.22); }
+  .dot-fill { background: var(--btn); }
+  .hero-content { order: 3; padding: 0 1.5rem; }
+  .hero-tag { color: var(--btn); text-shadow: none; margin-bottom: 1.1rem; }
+  .hero-tag::before, .hero-tag::after { background: var(--btn); opacity: 0.45; }
+  .hero-title { color: var(--heading); text-shadow: none; }
+  .hero-title em { color: var(--btn); }
+  .hero-subtitle { color: var(--text); opacity: 0.82; text-shadow: none; margin: 1rem 0 2rem; }
+  .hero .btn-ghost { color: var(--dark); border-color: rgba(23,100,122,0.4); }
+  .hero .btn-ghost:hover { border-color: var(--btn); color: var(--btn); background: rgba(216,79,143,0.1); }
+
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat-item:nth-child(2) { border-right: none; }
+  .stat-item:nth-child(3) { border-right: 1px solid rgba(255,255,255,0.18); border-top: 1px solid rgba(255,255,255,0.18); }
+  .stat-item:last-child { border-top: 1px solid rgba(255,255,255,0.18); }
+  .stat-num { font-size: 2.4rem; }
+
+  .services-head { padding: 4rem 1.5rem 0; }
+  .services-grid { grid-template-columns: 1fr; margin-top: 2.5rem; }
+  .svc-img { height: auto; object-fit: contain; filter: brightness(0.92); }
+  .svc-desc { max-height: 240px; opacity: 1; }
+  .svc-bar { width: 36px; }
+  .svc-overlay { background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 32%, transparent 62%); padding: 1.6rem 1.4rem; }
+
+  .about-img { min-height: 0; }
+  .about-img img { height: auto; }
+  .about-text { padding: 2.8rem 1.5rem; }
+
+  .testimonials { padding: 4rem 1.5rem; }
+  .testi-card { padding: 2rem 1.6rem; }
+  .our-work { padding: 4rem 1.5rem 0; }
+  .video-grid { grid-template-columns: repeat(2, 1fr); gap: 3px; }
+  .video-label { opacity: 1; }
+
+  .info-section { grid-template-columns: 1fr; }
+  .info-col { padding: 3.5rem 1.5rem; }
+  .info-col:first-child { border-right: none; border-bottom: 1px solid var(--line); }
+  .c-lbl { min-width: 78px; }
+
+  footer { grid-template-columns: 1fr; gap: 1.2rem; padding: 2.2rem 1.5rem; justify-items: center; text-align: center; }
+  .footer-logo-text { font-size: 1.5rem; }
+  .footer-logo-img { height: 50px; }
+  .f-links { justify-content: center; }
+  .hero-scroll { display: none; }
+  .wa-float { bottom: 1.5rem; right: 1.5rem; }
+}
+@media (max-width: 480px) {
+  nav { padding: 0.3rem 1rem; }
+  .nav-logo-text { font-size: 1.1rem; }
+  .nav-logo-img { height: 38px; }
+  .hero-content { padding: 0 1.4rem; }
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .btn-gold, .btn-ghost, .btn-whatsapp { width: 100%; max-width: 280px; text-align: center; justify-content: center; }
+  .stats { grid-template-columns: 1fr; }
+  .stat-item { border-right: none !important; border-top: none !important; border-bottom: 1px solid rgba(255,255,255,0.18); padding: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- FLOATING WHATSAPP -->
+<a class="wa-float" href="https://wa.me/919448919597?text=Hi!%20I%20found%20you%20on%20your%20website.%20I%20would%20like%20to%20know%20more%20about%20your%20crochet%20pieces." target="_blank" aria-label="Chat on WhatsApp">
+  <span class="wa-tooltip">Chat on WhatsApp</span>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">
+    <img src="logo.png" alt="Tangled Crochet Closet" class="nav-logo-img">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#our-work">Our Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://www.instagram.com/crochet_closet16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a></li>
+    <li><a href="https://wa.me/919448919597?text=Hi!%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="btn-nav">Order Now</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-backdrop"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="slides">
+    <div class="slide is-active"><div class="slide-img" style="background-image: url('hero1.jpg'); background-position: center 35%;"></div></div>
+    <div class="slide"><div class="slide-img" style="background-image: url('hero2.jpg'); background-position: center 70%;"></div></div>
+    <div class="slide"><div class="slide-img" style="background-image: url('hero3.jpg'); background-position: center 45%;"></div></div>
+    <div class="slide"><div class="slide-img" style="background-image: url('hero4.jpg'); background-position: center 35%;"></div></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Handmade · Made To Order · Crochet Boutique</div>
+    <h1 class="hero-title"><em>Crochet</em><br>Closet</h1>
+    <p class="hero-subtitle">Handcrafted treasures, stitched one loop at a time</p>
+    <div class="hero-ctas">
+      <a href="https://wa.me/919448919597?text=Hi!%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="btn-gold">Order on WhatsApp</a>
+      <a href="https://www.instagram.com/crochet_closet16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="btn-ghost">Follow on Instagram</a>
+    </div>
+  </div>
+
+  <div class="slide-dots">
+    <div class="dot is-active"><div class="dot-fill"></div></div>
+    <div class="dot"><div class="dot-fill"></div></div>
+    <div class="dot"><div class="dot-fill"></div></div>
+    <div class="dot"><div class="dot-fill"></div></div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-bar"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item reveal">
+    <div class="stat-num">150+</div>
+    <div class="stat-label">Handmade Designs</div>
+  </div>
+  <div class="stat-item reveal d1">
+    <div class="stat-num">1000+</div>
+    <div class="stat-label">Happy Customers</div>
+  </div>
+  <div class="stat-item reveal d2">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Made By Hand</div>
+  </div>
+  <div class="stat-item reveal d3">
+    <div class="stat-num">Custom</div>
+    <div class="stat-label">Orders Welcome</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about-wrap" id="about">
+  <div class="about-img">
+    <img src="about.jpg" alt="Crochet Closet handmade pieces" loading="lazy" style="object-position: center 30%;">
+    <div class="about-badge">Handmade With Love</div>
+  </div>
+  <div class="about-text reveal">
+    <div class="sec-label">About Us</div>
+    <h2 class="sec-title">More than a craft.<br>A piece made just for you.</h2>
+    <div class="gold-rule"></div>
+    <p class="quote">"Handcrafted treasures, stitched one loop at a time."</p>
+    <p class="body">Crochet Closet is a home-grown craft studio dedicated to handmade crochet treasures — from cozy bags and amigurumi toys to clothing, home decor, and accessories. Every piece is crafted stitch by stitch with quality yarn and genuine care, so you get something as unique as you are. Whether you're looking for a ready-made favourite or a fully custom creation, we bring your ideas to life with patience, precision, and a whole lot of love.</p>
+    <a href="https://wa.me/919448919597?text=Hi!%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="btn-gold" style="align-self:flex-start;">WhatsApp — Order Now</a>
+  </div>
+</div>
+
+<!-- COLLECTIONS -->
+<div class="services-head" id="services">
+  <div class="sec-label reveal">Our Collections</div>
+  <h2 class="sec-title reveal d1">Curated crochet,<br>crafted with precision.</h2>
+</div>
+<div class="services-grid">
+  <div class="svc-card">
+    <img class="svc-img" src="svc-bags.jpg" alt="Crochet Bags & Totes" loading="lazy" style="object-position: center 30%;">
+    <div class="svc-overlay">
+      <div class="svc-num">01</div>
+      <div class="svc-name">Bags &amp; Totes</div>
+      <p class="svc-desc">Sturdy, stylish handbags, totes and pouches crocheted with premium yarn — perfect for everyday use or as a statement accessory.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+  <div class="svc-card">
+    <img class="svc-img" src="svc-amigurumi.jpg" alt="Amigurumi & Soft Toys" loading="lazy" style="object-position: center 25%;">
+    <div class="svc-overlay">
+      <div class="svc-num">02</div>
+      <div class="svc-name">Amigurumi &amp; Soft Toys</div>
+      <p class="svc-desc">Adorable handmade crochet dolls, animals and characters — perfect as gifts, nursery decor, or a treasured keepsake.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+  <div class="svc-card">
+    <img class="svc-img" src="svc-clothing.jpg" alt="Clothing & Apparel" loading="lazy" style="object-position: center 35%;">
+    <div class="svc-overlay">
+      <div class="svc-num">03</div>
+      <div class="svc-name">Clothing &amp; Apparel</div>
+      <p class="svc-desc">Cozy crochet tops, ponchos, cardigans and baby wear, custom-fit and finished with delicate detailing.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+  <div class="svc-card">
+    <img class="svc-img" src="svc-decor.jpg" alt="Home Decor" loading="lazy" style="object-position: center center;">
+    <div class="svc-overlay">
+      <div class="svc-num">04</div>
+      <div class="svc-name">Home Decor</div>
+      <p class="svc-desc">Coasters, baskets, wall hangings and cushion covers that add a handmade touch of warmth to every room.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+  <div class="svc-card">
+    <img class="svc-img" src="svc-accessories.jpg" alt="Accessories" loading="lazy" style="object-position: center center;">
+    <div class="svc-overlay">
+      <div class="svc-num">05</div>
+      <div class="svc-name">Accessories</div>
+      <p class="svc-desc">Keychains, hair clips, scrunchies and jewelry — small crochet details that make a big statement.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+  <div class="svc-card">
+    <img class="svc-img" src="svc-custom.jpg" alt="Custom & Personalised Orders" loading="lazy" style="object-position: center 30%;">
+    <div class="svc-overlay">
+      <div class="svc-num">06</div>
+      <div class="svc-name">Custom Orders</div>
+      <p class="svc-desc">Got an idea in mind? We design and crochet bespoke pieces tailored to your colours, size and style.</p>
+      <div class="svc-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="reviews">
+  <div class="sec-label reveal">Client Testimonials</div>
+  <h2 class="sec-title reveal d1">What our customers say.</h2>
+  <p class="reveal d2" style="font-size:14px;color:var(--muted);margin-top:-1.5rem;margin-bottom:1rem;">Loved by customers near and far.</p>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="t-text">"Ordered a custom crochet bag and it turned out even better than I imagined! The detailing and finish were so neat. Will definitely be ordering again."</p>
+      <div class="t-author"><strong>Ananya</strong>Verified Customer</div>
+    </div>
+    <div class="testi-card reveal d1">
+      <div class="stars">★★★★★</div>
+      <p class="t-text">"The amigurumi toy I got made for my niece is the cutest thing ever. You can tell every stitch was made with so much care. Highly recommend Crochet Closet!"</p>
+      <div class="t-author"><strong>Meera</strong>Verified Customer</div>
+    </div>
+    <div class="testi-card reveal d2">
+      <div class="stars">★★★★★</div>
+      <p class="t-text">"I love how customisable everything is. I asked for specific colours for a crochet top and they nailed it perfectly. Beautiful handmade quality."</p>
+      <div class="t-author"><strong>Riya</strong>Verified Customer</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:3rem;">
+    <a href="https://www.instagram.com/crochet_closet16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="btn-gold reveal" style="display:inline-flex; align-items:center; gap:0.6rem; text-decoration:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      Share Your Review on Instagram
+    </a>
+  </div>
+</section>
+
+<!-- OUR WORK -->
+<section class="our-work" id="our-work">
+  <div class="sec-label reveal">Our Work</div>
+  <h2 class="sec-title reveal d1">See the craft come together.</h2>
+  <p class="reveal d2" style="font-size:14px;color:var(--muted);margin-top:-1rem;margin-bottom:2rem;">Real pieces, real process — watch our work in action.</p>
+  <div class="video-grid">
+    <div class="video-card reveal">
+      <video muted loop playsinline preload="none" src="work-process.mp4"></video>
+      <div class="video-label">Bulk Orders</div>
+    </div>
+    <div class="video-card reveal d1">
+      <video muted loop playsinline preload="none" src="work-finished.mp4"></video>
+      <div class="video-label">Baby Bassinet</div>
+    </div>
+    <div class="video-card reveal d2">
+      <video muted loop playsinline preload="none" src="work-custom.mp4"></video>
+      <div class="video-label">How It Started</div>
+    </div>
+    <div class="video-card reveal d2">
+      <video muted loop playsinline preload="none" src="work-packaging.mp4"></video>
+      <div class="video-label">Thank You ♥</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOURS + CONTACT -->
+<div class="info-section" id="hours">
+  <div class="info-col">
+    <div class="sec-label">Order Hours</div>
+    <h2 class="sec-title">We're here<br>when you need us.</h2>
+    <div style="margin-top:2rem;">
+      <div class="hours-row">
+        <span class="h-day">Monday – Saturday</span>
+        <span class="h-time">10:00 am – 7:00 pm</span>
+      </div>
+      <div class="hours-row">
+        <span class="h-day">Sunday</span>
+        <span class="h-time">By Appointment</span>
+      </div>
+      <div class="hours-row">
+        <span class="h-day">WhatsApp Orders</span>
+        <span class="h-time h-open">Open Daily &nbsp;●&nbsp; Quick Response</span>
+      </div>
+    </div>
+  </div>
+  <div class="info-col" id="contact">
+    <div class="sec-label">Contact</div>
+    <h2 class="sec-title">Get in touch<br>with us.</h2>
+    <div style="margin-top:2rem;">
+      <a class="contact-row" href="tel:+919448919597">
+        <span class="c-lbl">Phone</span>
+        <span class="c-val">+91 94489 19597</span>
+      </a>
+      <a class="contact-row" href="https://wa.me/919448919597" target="_blank">
+        <span class="c-lbl">WhatsApp</span>
+        <span class="c-val">+91 94489 19597</span>
+      </a>
+      <a class="contact-row" href="https://www.instagram.com/crochet_closet16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
+        <span class="c-lbl">Instagram</span>
+        <span class="c-val">@crochet_closet16</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">
+    <img src="logo.png" alt="Tangled Crochet Closet" class="footer-logo-img">
+  </div>
+  <div class="f-copy">© 2026 Crochet Closet. All rights reserved.</div>
+  <div class="f-links">
+    <a href="https://www.instagram.com/crochet_closet16?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      Instagram
+    </a>
+    <a href="https://wa.me/919448919597" target="_blank">WhatsApp</a>
+    <a href="tel:+919448919597">Call Us</a>
+  </div>
+</footer>
+
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// MOBILE MENU
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelector('.nav-links');
+const navBackdrop = document.querySelector('.nav-backdrop');
+const closeMenu = () => {
+  navToggle.classList.remove('open');
+  navLinks.classList.remove('open');
+  navBackdrop.classList.remove('open');
+  document.body.classList.remove('menu-open');
+  navToggle.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+};
+if (navToggle) {
+  navToggle.addEventListener('click', () => {
+    const willOpen = !navLinks.classList.contains('open');
+    navToggle.classList.toggle('open', willOpen);
+    navLinks.classList.toggle('open', willOpen);
+    navBackdrop.classList.toggle('open', willOpen);
+    document.body.classList.toggle('menu-open', willOpen);
+    navToggle.setAttribute('aria-expanded', String(willOpen));
+    document.body.style.overflow = willOpen ? 'hidden' : '';
+  });
+  navBackdrop.addEventListener('click', closeMenu);
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && navLinks.classList.contains('open')) closeMenu();
+  });
+}
+
+// HERO SLIDESHOW
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dots = Array.from(document.querySelectorAll('.dot'));
+let slideIndex = 0;
+let timer;
+
+const setSlide = (nextIndex) => {
+  if (!slides.length) return;
+  const outgoing = slides[slideIndex];
+  outgoing.classList.remove('is-active');
+  outgoing.classList.add('is-prev');
+  setTimeout(() => {
+    outgoing.style.transition = 'none';
+    outgoing.classList.remove('is-prev');
+    void outgoing.offsetWidth;
+    outgoing.style.transition = '';
+  }, 1400);
+  dots[slideIndex].classList.remove('is-active');
+  dots[slideIndex].classList.add('is-complete');
+  slideIndex = nextIndex;
+  slides[slideIndex].classList.add('is-active');
+  dots[slideIndex].classList.remove('is-complete');
+  dots[slideIndex].classList.add('is-active');
+};
+
+const nextSlide = () => setSlide((slideIndex + 1) % slides.length);
+
+if (slides.length) {
+  timer = setInterval(nextSlide, 7000);
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      clearInterval(timer);
+      setSlide(i);
+      timer = setInterval(nextSlide, 7000);
+    });
+  });
+}
+
+// VIDEO LAZY-LOAD + AUTOPLAY ON SCROLL (only fetches a clip when it's in view)
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const v = entry.target.querySelector('video');
+    if (!v) return;
+    if (entry.isIntersecting) {
+      if (!v.dataset.loaded) { v.load(); v.dataset.loaded = '1'; }
+      v.play().catch(() => {});
+    } else { v.pause(); }
+  });
+}, { threshold: 0.25 });
+document.querySelectorAll('.video-card').forEach(c => videoObserver.observe(c));
+
+// REVEAL ON SCROLL
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
